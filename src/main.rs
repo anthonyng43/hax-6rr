@@ -46,41 +46,59 @@ fn main() {
 			cc.egui_ctx.set_fonts(fonts);
 
 			Box::new(App {
-				runtime,
+                runtime,
 				server_buf: String::new(),
 				server: None,
-				cars: Vec::new(),
-				car: None,
-				car_setting: None,
-				car_items: Vec::new(),
-				car_play_count: 0,
-				car_odometer: 0,
-				vs_cool_or_wild: 0,
-				vs_smooth_or_rough: 0,
-				vs_play_count: 0,
-				sub_menu: None,
-				user_items: Vec::new(),
-			})
+                cars: Vec::new(),
+                car: None,
+                car_setting: None,
+                car_items: Vec::new(),
+                car_play_count: 0,
+                car_odometer: 0,
+                vs_star_count: 0,
+                vs_cool_or_wild: 0,
+                vs_smooth_or_rough: 0,
+                vs_gold_medal: 0,
+                vs_silver_medal: 0,
+                vs_bronze_medal: 0,
+                vs_plain_medal: 0,
+                vs_play_count: 0,
+                sub_menu: None,
+                user_items: Vec::new(),
+                glb_enabled: false,
+                custom: false,
+				custom_color: false,
+				force: false,
+            })
 		}),
 	)
 	.unwrap();
 }
 
 struct App {
-	runtime: tokio::runtime::Runtime,
+    runtime: tokio::runtime::Runtime,
 	server_buf: String,
 	server: Option<Url>,
-	cars: Vec<wm::Car>,
-	car: Option<wm::Car>,
-	car_setting: Option<wm::CarSetting>,
-	car_items: Vec<wm::CarItem>,
-	car_play_count: u32,
-	car_odometer: u32,
-	vs_cool_or_wild: i32,
-	vs_smooth_or_rough: i32,
-	vs_play_count: u32,
-	sub_menu: Option<SubMenu>,
-	user_items: Vec<wm::UserItem>,
+    cars: Vec<wm::Car>,
+    car: Option<wm::Car>,
+    car_setting: Option<wm::CarSetting>,
+    car_items: Vec<wm::CarItem>,
+    car_play_count: u32,
+    car_odometer: u32,
+    vs_star_count: u32,
+    vs_cool_or_wild: i32,
+    vs_smooth_or_rough: i32,
+    vs_gold_medal: u32,
+    vs_silver_medal: u32,
+    vs_bronze_medal: u32,
+    vs_plain_medal: u32,
+    vs_play_count: u32,
+    sub_menu: Option<SubMenu>,
+    user_items: Vec<wm::UserItem>,
+    glb_enabled: bool,
+    custom: bool,
+    custom_color: bool,
+	force: bool,
 }
 
 enum SubMenu {
@@ -138,6 +156,10 @@ impl eframe::App for App {
 							self.car.as_mut().unwrap(),
 							self.car_setting.as_mut().unwrap(),
 							&self.car_items,
+							&mut self.glb_enabled,
+							&mut self.custom,
+							&mut self.custom_color,
+							&mut self.force,
 						),
 						SubMenu::UserItems(menu) => menu.update(
 							ui,
@@ -190,7 +212,12 @@ impl eframe::App for App {
 								self.car_odometer = car.odometer;
 								self.vs_cool_or_wild = car.vs_cool_or_wild;
 								self.vs_smooth_or_rough = car.vs_smooth_or_rough;
+								self.vs_star_count = car.vs_star_count;
 								self.vs_play_count = car.vs_play_count;
+								self.vs_gold_medal = car.vs_triple_star_medals;
+								self.vs_silver_medal = car.vs_double_star_medals;
+								self.vs_bronze_medal = car.vs_single_star_medals;
+								self.vs_plain_medal = car.vs_plain_medals;
 							}
 							if ui.button("User Items").clicked() {
 								self.sub_menu = Some(SubMenu::UserItems(useritems::UserItems {
@@ -211,9 +238,17 @@ impl eframe::App for App {
 									vs_cool_or_wild: self.vs_cool_or_wild,
 									vs_smooth_or_rough: self.vs_smooth_or_rough,
 									vs_play_count: self.vs_play_count,
+									vs_star_count: self.vs_star_count,
 									odometer_buf: self.car_odometer.to_string(),
-									cool_or_wild_buf: self.vs_cool_or_wild.to_string(),
-									smooth_or_rough_buf: self.vs_smooth_or_rough.to_string(),
+									vs_star_count_buf: self.vs_star_count.to_string(),
+									vs_gold_medal: self.vs_gold_medal,
+									vs_silver_medal: self.vs_silver_medal,
+									vs_bronze_medal: self.vs_bronze_medal,
+									vs_plain_medal: self.vs_plain_medal,
+									gold_medal_buf: self.vs_gold_medal.to_string(),
+									silver_medal_buf: self.vs_silver_medal.to_string(),
+									bronze_medal_buf: self.vs_bronze_medal.to_string(),
+									plain_medal_buf: self.vs_plain_medal.to_string(),
 								}));
 							}
 						}
