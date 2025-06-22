@@ -1,9 +1,9 @@
 use crate::*;
 use anyhow::Result;
-use eframe::egui::{self, ColorImage, TextureHandle, TextureOptions, Vec2, Color32, Stroke};
-use std::{io::Cursor, u32};
+use eframe::egui::{self, Color32, ColorImage, Stroke, TextureHandle, TextureOptions, Vec2};
 use num_derive::{FromPrimitive, ToPrimitive};
 use num_traits::{FromPrimitive, ToPrimitive};
+use std::{io::Cursor, u32};
 use strum::{EnumIter, IntoEnumIterator};
 use url::Url;
 
@@ -44,15 +44,15 @@ impl CarMenu {
 			if let Some(selected_car) = wm::Cars::from_u32(car.visual_model()) {
 				let have_dressup = selected_car.have_dress_up();
 				let have_limited_dressup = selected_car.limited_dress_up();
-				
+
 				let mut save_clicked = false;
 				let mut update_clicked = false;
-			
+
 				ui.horizontal(|ui| {
 					if ui.button("Save").clicked() {
 						save_clicked = true;
 					}
-			
+
 					if have_dressup {
 						if ui.button("Update Car Dressup").clicked() {
 							update_clicked = true;
@@ -86,11 +86,11 @@ impl CarMenu {
 							.unwrap_or(self.vs_bronze_medal),
 						self.plain_medal_buf
 							.parse()
-							.unwrap_or(self.vs_plain_medal),
+							.unwrap_or(self.vs_plain_medal)
 					)
 					.await;
 				}
-			
+
 				if update_clicked {
 					_ = update_car(
 						server,
@@ -103,7 +103,7 @@ impl CarMenu {
 				egui::Grid::new("CarGrid").num_columns(2).show(ui, |ui| {
 					set_car_class(ui, car);
 					set_region_and_country(ui, car, glb_enabled);
-					
+
 					if have_dressup {
 						if have_limited_dressup {
 							set_aero_set(ui, car, car_items);
@@ -187,7 +187,7 @@ impl CarMenu {
 					ui.add(egui::TextEdit::singleline(&mut self.plain_medal_buf));
 					ui.end_row();
 					ui.end_row();
-					
+
 					aura_axis(ui, &mut self.vs_cool_or_wild, &mut self.vs_smooth_or_rough);
 					car_aura(car, self.odometer, self.vs_cool_or_wild, self.vs_smooth_or_rough);
 				});
@@ -369,16 +369,16 @@ fn set_color(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem], cu
 			item.category == wm::ItemCategory::CatCustomColor.into()
 				&& Some(item.item_id) == Some(1)
 		}) {
-		ui.checkbox(custom_color, "Custom Color");
+			ui.checkbox(custom_color, "Custom Color");
 		}
-    });
+	});
 
-    if *custom_color {
-        if let Some(selected_car) = wm::Cars::from_u32(car.visual_model()) {
-            let custom_colors = selected_car.custom_colors();
+	if *custom_color {
+		if let Some(selected_car) = wm::Cars::from_u32(car.visual_model()) {
+			let custom_colors = selected_car.custom_colors();
 
-            if !custom_colors.is_empty() {
-                let selected_color_name = &custom_colors[car.custom_color as usize].name;
+			if !custom_colors.is_empty() {
+				let selected_color_name = &custom_colors[car.custom_color as usize].name;
 
 				egui::ComboBox::from_id_source("CarCustomColorComboBox")
 					.selected_text(selected_color_name)
@@ -388,63 +388,59 @@ fn set_color(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem], cu
 								item.category == wm::ItemCategory::CatCustomColor.into()
 									&& Some(item.item_id) == Some(i as u32)
 							}) {
-								ui.selectable_value(
-									&mut car.custom_color,
-									i as u32,
-									&color.name,
-								);
+								ui.selectable_value(&mut car.custom_color, i as u32, &color.name);
 							}
 						}
 					});
 			}
-        }
-    } else {
-        car.custom_color = 0;
+		}
+	} else {
+		car.custom_color = 0;
 
-        if let Some(selected_car) = wm::Cars::from_u32(car.visual_model()) {
-            let default_colors = selected_car.default_colors();
+		if let Some(selected_car) = wm::Cars::from_u32(car.visual_model()) {
+			let default_colors = selected_car.default_colors();
 
-            if !default_colors.is_empty() {
-                let selected_color_name = &default_colors[car.default_color() as usize].name;
+			if !default_colors.is_empty() {
+				let selected_color_name = &default_colors[car.default_color() as usize].name;
 
-                egui::ComboBox::from_id_source("DefaultColorComboBox")
-                    .selected_text(selected_color_name)
-                    .show_ui(ui, |ui| {
-                        for (i, color) in default_colors.iter().enumerate() {
-                            ui.selectable_value(
-                                &mut car.default_color,
-                                Some(i as u32),
-                                &color.name,
-                            );
-                        }
-                    });
-            }
-        }
-    }
-    ui.end_row();
+				egui::ComboBox::from_id_source("DefaultColorComboBox")
+					.selected_text(selected_color_name)
+					.show_ui(ui, |ui| {
+						for (i, color) in default_colors.iter().enumerate() {
+							ui.selectable_value(
+								&mut car.default_color,
+								Some(i as u32),
+								&color.name,
+							);
+						}
+					});
+			}
+		}
+	}
+	ui.end_row();
 }
 
 fn set_region_and_country(ui: &mut egui::Ui, car: &mut wm::Car, glb_enabled: &mut bool) {
-    fn get_region_list(region: Option<u32>) -> String {
-        if let Some(region_id) = region {
-            if let Some(jpn) = wm::Jpn::from_u32(region_id) {
-                return jpn.to_string();
-            }
-        }
-        String::from("Not Valid Selection")
-    }
+	fn get_region_list(region: Option<u32>) -> String {
+		if let Some(region_id) = region {
+			if let Some(jpn) = wm::Jpn::from_u32(region_id) {
+				return jpn.to_string();
+			}
+		}
+		String::from("Not Valid Selection")
+	}
 
-    fn get_glb_list(glb: Option<u32>) -> String {
-        if let Some(glb_id) = glb {
-            if let Some(glb) = wm::Glb::from_u32(glb_id) {
-                return glb.to_string();
-            }
-        }
-        String::from("Not Valid Selection")
-    }
+	fn get_glb_list(glb: Option<u32>) -> String {
+		if let Some(glb_id) = glb {
+			if let Some(glb) = wm::Glb::from_u32(glb_id) {
+				return glb.to_string();
+			}
+		}
+		String::from("Not Valid Selection")
+	}
 
-    ui.horizontal(|ui| {
-        ui.label("Region");
+	ui.horizontal(|ui| {
+		ui.label("Region");
 		ui.checkbox(glb_enabled, "GLB");
 	});
 
@@ -467,54 +463,58 @@ fn set_region_and_country(ui: &mut egui::Ui, car: &mut wm::Car, glb_enabled: &mu
 			.show_ui(ui, |ui| {
 				for region_id in 1..=47 {
 					let region_option = Some(region_id);
-					ui.selectable_value(&mut car.region_id, region_option, get_region_list(region_option));
+					ui.selectable_value(
+						&mut car.region_id,
+						region_option,
+						get_region_list(region_option),
+					);
 				}
 			});
 	}
-    ui.end_row();
+	ui.end_row();
 }
 
 fn set_rival_marker(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem]) {
-    ui.label("Rival Marker");
+	ui.label("Rival Marker");
 
-    let selected = match car.rival_marker {
-        Some(rival_marker_value) => match wm::RivalMarker::from_u32(rival_marker_value) {
-            Some(rivalmarker) => rivalmarker.to_string(),
-            None => String::from("Stock"),
-        },
-        None => String::from("Stock"),
-    };
+	let selected = match car.rival_marker {
+		Some(rival_marker_value) => match wm::RivalMarker::from_u32(rival_marker_value) {
+			Some(rivalmarker) => rivalmarker.to_string(),
+			None => String::from("Stock"),
+		},
+		None => String::from("Stock"),
+	};
 
-    egui::ComboBox::from_id_source("RivalMarkerComboBox")
-        .selected_text(selected)
-        .show_ui(ui, |ui| {
-            ui.selectable_value(&mut car.rival_marker, Some(0), "Stock");
-            for rivalmarker in wm::RivalMarker::iter() {
-                if car_items.iter().any(|item| {
-                    item.category == wm::ItemCategory::CatRivalMarker.into()
-                        && Some(item.item_id) == rivalmarker.to_u32()
-                }) {
-                    ui.selectable_value(
-                        &mut car.rival_marker,
-                        rivalmarker.to_u32(),
-                        rivalmarker.to_string(),
-                    );
-                }
-            }
-        });
-    ui.end_row();
+	egui::ComboBox::from_id_source("RivalMarkerComboBox")
+		.selected_text(selected)
+		.show_ui(ui, |ui| {
+			ui.selectable_value(&mut car.rival_marker, Some(0), "Stock");
+			for rivalmarker in wm::RivalMarker::iter() {
+				if car_items.iter().any(|item| {
+					item.category == wm::ItemCategory::CatRivalMarker.into()
+						&& Some(item.item_id) == rivalmarker.to_u32()
+				}) {
+					ui.selectable_value(
+						&mut car.rival_marker,
+						rivalmarker.to_u32(),
+						rivalmarker.to_string(),
+					);
+				}
+			}
+		});
+	ui.end_row();
 }
 
 fn set_window_deco(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem]) {
 	ui.label("Window Decoration");
 
 	let selected = match car.window_decoration {
-        Some(deco_value) => match wm::TeamDeco::from_u32(deco_value) {
-            Some(windowdecoration) => windowdecoration.to_string(),
-            None => String::from("Stock"),
-        },
+		Some(deco_value) => match wm::TeamDeco::from_u32(deco_value) {
+			Some(windowdecoration) => windowdecoration.to_string(),
+			None => String::from("Stock"),
+		},
 		None => String::from("Stock"),
-    };
+	};
 	egui::ComboBox::from_id_source("WindowDecorationComboBox")
 		.selected_text(selected)
 		.show_ui(ui, |ui| {
@@ -573,94 +573,93 @@ fn set_terminal_background(ui: &mut egui::Ui, car_settings: &mut wm::CarSetting,
 }
 
 fn set_vs_grade(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem]) {
-    fn get_vs_aura(id: usize) -> String {
-        if id > 90 {
-            match id {
-                100 => String::from("Anniversary"),
-                101 => String::from("Halloween"),
-                _ => panic!("Unknown vs aura"),
-            }
-        } else {
-            format!("{} {}", wm::VS_GRADES[(id - 1) / 3], ((id - 1) % 3) + 1)
-        }
-    }
+	fn get_vs_aura(id: usize) -> String {
+		if id > 90 {
+			match id {
+				100 => String::from("Anniversary"),
+				101 => String::from("Halloween"),
+				_ => panic!("Unknown vs aura"),
+			}
+		} else {
+			format!("{} {}", wm::VS_GRADES[(id - 1) / 3], ((id - 1) % 3) + 1)
+		}
+	}
 
-    ui.label("Vs Aura");
-    let selected = match car.aura_motif {
-        Some(aura_motif_value) if (1..=(wm::VS_GRADES.len() * 3) as u32).contains(&aura_motif_value) => {
-            get_vs_aura(aura_motif_value as usize)
-        }
-        _ => String::from("No Vs Grade"),
-    };
+	ui.label("Vs Aura");
+	let selected = match car.aura_motif {
+		Some(aura_motif_value)
+			if (1..=(wm::VS_GRADES.len() * 3) as u32).contains(&aura_motif_value) =>
+		{
+			get_vs_aura(aura_motif_value as usize)
+		}
+		_ => String::from("No Vs Grade"),
+	};
 
-    egui::ComboBox::from_id_source("VsAuraComboBox")
-        .selected_text(selected)
-        .show_ui(ui, |ui| {
-            ui.selectable_value(&mut car.aura_motif, Some(0), "No Vs Grade");
+	egui::ComboBox::from_id_source("VsAuraComboBox")
+		.selected_text(selected)
+		.show_ui(ui, |ui| {
+			ui.selectable_value(&mut car.aura_motif, Some(0), "No Vs Grade");
 
-            for grades in 1..=(wm::VS_GRADES.len() * 3) {
-                if car_items.iter().any(|item| {
-                    item.category == wm::ItemCategory::CatAuraMotif.into()
-                        && Some(item.item_id) == grades.to_u32()
-                }) {
-                    ui.selectable_value(
-                        &mut car.aura_motif,
-                        grades.to_u32(),
-                        get_vs_aura(grades).to_string(),
-                    );
-                }
-            }
+			for grades in 1..=(wm::VS_GRADES.len() * 3) {
+				if car_items.iter().any(|item| {
+					item.category == wm::ItemCategory::CatAuraMotif.into()
+						&& Some(item.item_id) == grades.to_u32()
+				}) {
+					ui.selectable_value(
+						&mut car.aura_motif,
+						grades.to_u32(),
+						get_vs_aura(grades).to_string(),
+					);
+				}
+			}
 
-            let special_items = [
-                (100, "Anniversary"),
-                (101, "Halloween")
-            ];
+			let special_items = [(100, "Anniversary"), (101, "Halloween")];
 
-            for &(id, label) in &special_items {
-                if car_items.iter().any(|item| {
-                    item.category == wm::ItemCategory::CatAuraMotif.into()
-                        && Some(item.item_id) == id.to_u32()
-                }) {
-                    ui.selectable_value(&mut car.aura_motif, Some(id), label);
-                }
-            }
-        });
-    ui.end_row();
+			for &(id, label) in &special_items {
+				if car_items.iter().any(|item| {
+					item.category == wm::ItemCategory::CatAuraMotif.into()
+						&& Some(item.item_id) == id.to_u32()
+				}) {
+					ui.selectable_value(&mut car.aura_motif, Some(id), label);
+				}
+			}
+		});
+	ui.end_row();
 }
 
 fn set_name_frame(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem]) {
-    ui.label("Custom Frame");
+	ui.label("Custom Frame");
 
-    let selected = match car.custom_frame {
-        Some(custom_frame_value) => match wm::CustomFrame::from_u32(custom_frame_value) {
-            Some(customframe) => customframe.to_string(),
-            None => String::from("Stock"),
-        },
-        None => String::from("Stock"),
-    };
+	let selected = match car.custom_frame {
+		Some(custom_frame_value) => match wm::CustomFrame::from_u32(custom_frame_value) {
+			Some(customframe) => customframe.to_string(),
+			None => String::from("Stock"),
+		},
+		None => String::from("Stock"),
+	};
 
-    egui::ComboBox::from_id_source("CustomFrameComboBox")
-        .selected_text(selected)
-        .show_ui(ui, |ui| {
-            ui.selectable_value(&mut car.custom_frame, Some(0), "Stock");
-            for customframe in wm::CustomFrame::iter() {
-                if car_items.iter().any(|item| {
-                    item.category == wm::ItemCategory::CatCustomFrame.into()
-                        && Some(item.item_id) == customframe.to_u32()
-                }) {
-                    ui.selectable_value(
-                        &mut car.custom_frame,
-                        customframe.to_u32(),
-                        customframe.to_string(),
-                    );
-                }
-            }
-        });
-    ui.end_row();
+	egui::ComboBox::from_id_source("CustomFrameComboBox")
+		.selected_text(selected)
+		.show_ui(ui, |ui| {
+			ui.selectable_value(&mut car.custom_frame, Some(0), "Stock");
+			for customframe in wm::CustomFrame::iter() {
+				if car_items.iter().any(|item| {
+					item.category == wm::ItemCategory::CatCustomFrame.into()
+						&& Some(item.item_id) == customframe.to_u32()
+				}) {
+					ui.selectable_value(
+						&mut car.custom_frame,
+						customframe.to_u32(),
+						customframe.to_string(),
+					);
+				}
+			}
+		});
+	ui.end_row();
 }
 
 // thanks brogamer
-fn car_aura(car: &mut wm::Car, odometer: u32, vs_cool_or_wild: i32, vs_smooth_or_rough: i32,) {
+fn car_aura(car: &mut wm::Car, odometer: u32, vs_cool_or_wild: i32, vs_smooth_or_rough: i32) {
 	let current_mileage = odometer;
 	let offset = match current_mileage {
 		0..=5000 => 0,
@@ -672,201 +671,205 @@ fn car_aura(car: &mut wm::Car, odometer: u32, vs_cool_or_wild: i32, vs_smooth_or
 		1000001..=2000000 => 6,
 		_ => 7,
 	};
-	car.aura = Some((544 + ((vs_cool_or_wild + 4) * 8 * 8 * 2) + ((vs_smooth_or_rough + 4) * 8) + offset) as u32);
+	car.aura = Some(
+		(544 + ((vs_cool_or_wild + 4) * 8 * 8 * 2) + ((vs_smooth_or_rough + 4) * 8) + offset)
+			as u32,
+	);
 }
 
 const COLOR_IMAGE_BYTES: &[u8] = include_bytes!("color.png");
 fn aura_axis(ui: &mut egui::Ui, vs_cool_or_wild: &mut i32, vs_smooth_or_rough: &mut i32) {
 	ui.label("Car Aura");
-    let img = image::load(Cursor::new(COLOR_IMAGE_BYTES), image::ImageFormat::Png)
-        .unwrap()
-        .to_rgba8();
+	let img = image::load(Cursor::new(COLOR_IMAGE_BYTES), image::ImageFormat::Png)
+		.unwrap()
+		.to_rgba8();
 
-    let (width, height) = img.dimensions();
-    let color_image = ColorImage::from_rgba_unmultiplied([width as _, height as _], &img);
+	let (width, height) = img.dimensions();
+	let color_image = ColorImage::from_rgba_unmultiplied([width as _, height as _], &img);
 
-    let texture: TextureHandle = ui.ctx().load_texture("color_image", color_image, TextureOptions::default());
+	let texture: TextureHandle =
+		ui.ctx()
+			.load_texture("color_image", color_image, TextureOptions::default());
 
-    let image_response = ui.image(&texture);
-    let painter = ui.painter();
+	let image_response = ui.image(&texture);
+	let painter = ui.painter();
 
-    for i in -4..=4 {
-        for j in -4..=4 {
-            let dot_x = ((i + 4) as f32 / 8.0) * width as f32;
-            let dot_y = ((j + 4) as f32 / 8.0) * height as f32;
+	for i in -4..=4 {
+		for j in -4..=4 {
+			let dot_x = ((i + 4) as f32 / 8.0) * width as f32;
+			let dot_y = ((j + 4) as f32 / 8.0) * height as f32;
 
-            if let Some(pointer_pos) = ui.input(|i| i.pointer.interact_pos()) {
-                let dot_pos = image_response.rect.min + Vec2::new(dot_x, dot_y);
-                let distance = (pointer_pos - dot_pos).length();
-                if distance < 3.0 && image_response.rect.contains(pointer_pos) {
-                    *vs_cool_or_wild = i;
-                    *vs_smooth_or_rough = j;
-                }
-            }
-        }
-    }
+			if let Some(pointer_pos) = ui.input(|i| i.pointer.interact_pos()) {
+				let dot_pos = image_response.rect.min + Vec2::new(dot_x, dot_y);
+				let distance = (pointer_pos - dot_pos).length();
+				if distance < 3.0 && image_response.rect.contains(pointer_pos) {
+					*vs_cool_or_wild = i;
+					*vs_smooth_or_rough = j;
+				}
+			}
+		}
+	}
 
-    let current_dot_x = ((*vs_cool_or_wild + 4) as f32 / 8.0) * width as f32;
-    let current_dot_y = ((*vs_smooth_or_rough + 4) as f32 / 8.0) * height as f32;
+	let current_dot_x = ((*vs_cool_or_wild + 4) as f32 / 8.0) * width as f32;
+	let current_dot_y = ((*vs_smooth_or_rough + 4) as f32 / 8.0) * height as f32;
 
-    painter.circle(
-        image_response.rect.min + Vec2::new(current_dot_x, current_dot_y),
-        5.0, // Radius of the dot
-        Color32::WHITE,
-        Stroke::new(1.0, Color32::TRANSPARENT),
-    );
+	painter.circle(
+		image_response.rect.min + Vec2::new(current_dot_x, current_dot_y),
+		5.0, // Radius of the dot
+		Color32::WHITE,
+		Stroke::new(1.0, Color32::TRANSPARENT),
+	);
 	ui.end_row();
 }
 
 fn set_aero_set(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem]) {
-    ui.label("Aero Set");
-    
-    let aero_category = if let Some(selected_car) = wm::Cars::from_u32(car.visual_model()) {
-        selected_car.aero_category()
-    } else {
-        wm::ItemCategory::CatAeroFullset
-    };
+	ui.label("Aero Set");
 
-    let selected = wm::DU_ITEMS
-        .iter()
-        .find(|&item| item.server_id == car.aero && item.category == aero_category)
-        .map_or(String::from("Stock"), |item| item.name.to_string());
+	let aero_category = if let Some(selected_car) = wm::Cars::from_u32(car.visual_model()) {
+		selected_car.aero_category()
+	} else {
+		wm::ItemCategory::CatAeroFullset
+	};
 
-    let aero_set: Vec<&wm::DressUpItem> = wm::DU_ITEMS
-        .iter()
-        .filter(|&item| item.category == aero_category)
-        .collect();
+	let selected = wm::DU_ITEMS
+		.iter()
+		.find(|&item| item.server_id == car.aero && item.category == aero_category)
+		.map_or(String::from("Stock"), |item| item.name.to_string());
 
-    egui::ComboBox::from_id_source("AeroSetComboBox")
-        .selected_text(selected)
-        .show_ui(ui, |ui| {
-            ui.selectable_value(&mut car.aero, 0, "Stock");
-            for item in &aero_set {
-                if car_items.iter().any(|car_item| {
-                    car_item.category == aero_category.into()
-                        && Some(car_item.item_id) == item.server_id.to_u32()
-                }) {
-                    ui.selectable_value(&mut car.aero, item.server_id, item.name);
-                }
-            }
-        });
-    ui.end_row();
+	let aero_set: Vec<&wm::DressUpItem> = wm::DU_ITEMS
+		.iter()
+		.filter(|&item| item.category == aero_category)
+		.collect();
+
+	egui::ComboBox::from_id_source("AeroSetComboBox")
+		.selected_text(selected)
+		.show_ui(ui, |ui| {
+			ui.selectable_value(&mut car.aero, 0, "Stock");
+			for item in &aero_set {
+				if car_items.iter().any(|car_item| {
+					car_item.category == aero_category.into()
+						&& Some(car_item.item_id) == item.server_id.to_u32()
+				}) {
+					ui.selectable_value(&mut car.aero, item.server_id, item.name);
+				}
+			}
+		});
+	ui.end_row();
 }
 
 fn set_aero_mirror(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem]) {
 	ui.label("Aero Mirror");
 	let selected = wm::DU_ITEMS
-        .iter()
-        .find(|&item| item.server_id == car.mirror && item.category == wm::ItemCategory::CatMirror)
-        .map_or(String::from("Stock"), |item| item.name.to_string());
+		.iter()
+		.find(|&item| item.server_id == car.mirror && item.category == wm::ItemCategory::CatMirror)
+		.map_or(String::from("Stock"), |item| item.name.to_string());
 
-    let mirror: Vec<&wm::DressUpItem> = wm::DU_ITEMS
-        .iter()
-        .filter(|&item| item.category == wm::ItemCategory::CatMirror)
-        .collect();
+	let mirror: Vec<&wm::DressUpItem> = wm::DU_ITEMS
+		.iter()
+		.filter(|&item| item.category == wm::ItemCategory::CatMirror)
+		.collect();
 
-    egui::ComboBox::from_id_source("AeroMirrorComboBox")
-        .selected_text(selected)
-        .show_ui(ui, |ui| {
-            ui.selectable_value(&mut car.mirror, 0, "Stock");
-            for item in &mirror {
-                if car_items.iter().any(|car_item| {
-                    car_item.category == wm::ItemCategory::CatMirror.into()
-                        && Some(car_item.item_id) == item.server_id.to_u32()
-                }) {
-                    ui.selectable_value(&mut car.mirror, item.server_id, item.name);
-                }
-            }
-        });
-    ui.end_row();
+	egui::ComboBox::from_id_source("AeroMirrorComboBox")
+		.selected_text(selected)
+		.show_ui(ui, |ui| {
+			ui.selectable_value(&mut car.mirror, 0, "Stock");
+			for item in &mirror {
+				if car_items.iter().any(|car_item| {
+					car_item.category == wm::ItemCategory::CatMirror.into()
+						&& Some(car_item.item_id) == item.server_id.to_u32()
+				}) {
+					ui.selectable_value(&mut car.mirror, item.server_id, item.name);
+				}
+			}
+		});
+	ui.end_row();
 }
 
 fn set_bonnet(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem]) {
-    ui.label("Bonnet");
-    let selected = wm::DU_ITEMS
-        .iter()
-        .find(|&item| item.server_id == car.bonnet && item.category == wm::ItemCategory::CatBonnet)
-        .map_or(String::from("Stock"), |item| item.name.to_string());
+	ui.label("Bonnet");
+	let selected = wm::DU_ITEMS
+		.iter()
+		.find(|&item| item.server_id == car.bonnet && item.category == wm::ItemCategory::CatBonnet)
+		.map_or(String::from("Stock"), |item| item.name.to_string());
 
-    let bonnet: Vec<&wm::DressUpItem> = wm::DU_ITEMS
-        .iter()
-        .filter(|&item| item.category == wm::ItemCategory::CatBonnet)
-        .collect();
+	let bonnet: Vec<&wm::DressUpItem> = wm::DU_ITEMS
+		.iter()
+		.filter(|&item| item.category == wm::ItemCategory::CatBonnet)
+		.collect();
 
-    egui::ComboBox::from_id_source("BonnetComboBox")
-        .selected_text(selected)
-        .show_ui(ui, |ui| {
-            ui.selectable_value(&mut car.bonnet, 0, "Stock");
-            for item in &bonnet {
-                if car_items.iter().any(|car_item| {
-                    car_item.category == wm::ItemCategory::CatBonnet.into()
-                        && Some(car_item.item_id) == item.server_id.to_u32()
-                }) {
-                    ui.selectable_value(&mut car.bonnet, item.server_id, item.name);
-                }
-            }
-        });
-    ui.end_row();
+	egui::ComboBox::from_id_source("BonnetComboBox")
+		.selected_text(selected)
+		.show_ui(ui, |ui| {
+			ui.selectable_value(&mut car.bonnet, 0, "Stock");
+			for item in &bonnet {
+				if car_items.iter().any(|car_item| {
+					car_item.category == wm::ItemCategory::CatBonnet.into()
+						&& Some(car_item.item_id) == item.server_id.to_u32()
+				}) {
+					ui.selectable_value(&mut car.bonnet, item.server_id, item.name);
+				}
+			}
+		});
+	ui.end_row();
 }
 
 fn set_trunk(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem]) {
 	ui.label("Trunk");
 	let selected = wm::DU_ITEMS
-        .iter()
-        .find(|&item| item.server_id == car.trunk && item.category == wm::ItemCategory::CatTrunk)
-        .map_or(String::from("Stock"), |item| item.name.to_string());
+		.iter()
+		.find(|&item| item.server_id == car.trunk && item.category == wm::ItemCategory::CatTrunk)
+		.map_or(String::from("Stock"), |item| item.name.to_string());
 
-    let trunk: Vec<&wm::DressUpItem> = wm::DU_ITEMS
-        .iter()
-        .filter(|&item| item.category == wm::ItemCategory::CatTrunk)
-        .collect();
+	let trunk: Vec<&wm::DressUpItem> = wm::DU_ITEMS
+		.iter()
+		.filter(|&item| item.category == wm::ItemCategory::CatTrunk)
+		.collect();
 
-    egui::ComboBox::from_id_source("TrunkComboBox")
-        .selected_text(selected)
-        .show_ui(ui, |ui| {
-            ui.selectable_value(&mut car.trunk, 0, "Stock");
-            for item in &trunk {
-                if car_items.iter().any(|car_item| {
-                    car_item.category == wm::ItemCategory::CatTrunk.into()
-                        && Some(car_item.item_id) == item.server_id.to_u32()
-                }) {
-                    ui.selectable_value(&mut car.trunk, item.server_id, item.name);
-                }
-            }
-        });
-    ui.end_row();
+	egui::ComboBox::from_id_source("TrunkComboBox")
+		.selected_text(selected)
+		.show_ui(ui, |ui| {
+			ui.selectable_value(&mut car.trunk, 0, "Stock");
+			for item in &trunk {
+				if car_items.iter().any(|car_item| {
+					car_item.category == wm::ItemCategory::CatTrunk.into()
+						&& Some(car_item.item_id) == item.server_id.to_u32()
+				}) {
+					ui.selectable_value(&mut car.trunk, item.server_id, item.name);
+				}
+			}
+		});
+	ui.end_row();
 }
 
 fn set_neon(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem]) {
 	ui.label("Neon");
 	let selected = wm::DU_ITEMS
-        .iter()
-        .find(|&item| item.server_id == car.neon && item.category == wm::ItemCategory::CatNeon)
-        .map_or(String::from("Stock"), |item| item.name.to_string());
+		.iter()
+		.find(|&item| item.server_id == car.neon && item.category == wm::ItemCategory::CatNeon)
+		.map_or(String::from("Stock"), |item| item.name.to_string());
 
-    let neon: Vec<&wm::DressUpItem> = wm::DU_ITEMS
-        .iter()
-        .filter(|&item| item.category == wm::ItemCategory::CatNeon)
-        .collect();
+	let neon: Vec<&wm::DressUpItem> = wm::DU_ITEMS
+		.iter()
+		.filter(|&item| item.category == wm::ItemCategory::CatNeon)
+		.collect();
 
-    egui::ComboBox::from_id_source("NeonComboBox")
-        .selected_text(selected)
-        .show_ui(ui, |ui| {
-            ui.selectable_value(&mut car.neon, 0, "Stock");
-            for item in &neon {
-                if car_items.iter().any(|car_item| {
-                    car_item.category == wm::ItemCategory::CatNeon.into()
-                        && Some(car_item.item_id) == item.server_id.to_u32()
-                }) {
-                    ui.selectable_value(&mut car.neon, item.server_id, item.name);
-                }
-            }
-        });
-    ui.end_row();
+	egui::ComboBox::from_id_source("NeonComboBox")
+		.selected_text(selected)
+		.show_ui(ui, |ui| {
+			ui.selectable_value(&mut car.neon, 0, "Stock");
+			for item in &neon {
+				if car_items.iter().any(|car_item| {
+					car_item.category == wm::ItemCategory::CatNeon.into()
+						&& Some(car_item.item_id) == item.server_id.to_u32()
+				}) {
+					ui.selectable_value(&mut car.neon, item.server_id, item.name);
+				}
+			}
+		});
+	ui.end_row();
 }
 
 fn set_number_plate_frame(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem]) {
-
 	#[derive(FromPrimitive, ToPrimitive, EnumIter)]
 	enum PlateFrame {
 		FrameLogo = 1,
@@ -983,14 +986,14 @@ fn set_number_plate_frame(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm:
 			}
 		}
 	}
-	
+
 	ui.label("Number Plate Frame");
 	let selected = match car.plate {
-        plate_value => match PlateFrame::from_u32(plate_value) {
-            Some(plate) => plate.to_string(),
-            None => String::from("Stock"),
-		}
-    };
+		plate_value => match PlateFrame::from_u32(plate_value) {
+			Some(plate) => plate.to_string(),
+			None => String::from("Stock"),
+		},
+	};
 
 	ui.horizontal(|ui| {
 		egui::ComboBox::from_id_source("NumberPlateFrameComboBox")
@@ -1084,173 +1087,172 @@ fn set_number_plate_frame(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm:
 					}
 				});
 		}
-	});	
+	});
 	ui.end_row();
 }
 
-fn set_wing(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem], custom:&mut bool) {
-    #[derive(FromPrimitive, ToPrimitive, EnumIter)]
-    enum Wing {
-        GtA = 1,
-        ModelA,
-        GtB,
-        ModelB,
-        GtC,
-        GtD,
-        ModelC,
-        GtE,
+fn set_wing(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem], custom: &mut bool) {
+	#[derive(FromPrimitive, ToPrimitive, EnumIter)]
+	enum Wing {
+		GtA = 1,
+		ModelA,
+		GtB,
+		ModelB,
+		GtC,
+		GtD,
+		ModelC,
+		GtE,
 		Wingless = 127,
-    }
+	}
 
-    impl ToString for Wing {
-        fn to_string(&self) -> String {
-            match self {
-                Wing::GtA => String::from("GT Wing A (Straight)"),
-                Wing::ModelA => String::from("Car Model Wing A"),
-                Wing::GtB => String::from("GT Wing B (3D)"),
-                Wing::ModelB => String::from("Car Model Wing B"),
-                Wing::GtC => String::from("GT Wing C (3D2)"),
-                Wing::GtD => String::from("GT Wing D (Twin)"),
-                Wing::ModelC => String::from("Car Model Wing C"),
-                Wing::GtE => String::from("GT Wing E"),
+	impl ToString for Wing {
+		fn to_string(&self) -> String {
+			match self {
+				Wing::GtA => String::from("GT Wing A (Straight)"),
+				Wing::ModelA => String::from("Car Model Wing A"),
+				Wing::GtB => String::from("GT Wing B (3D)"),
+				Wing::ModelB => String::from("Car Model Wing B"),
+				Wing::GtC => String::from("GT Wing C (3D2)"),
+				Wing::GtD => String::from("GT Wing D (Twin)"),
+				Wing::ModelC => String::from("Car Model Wing C"),
+				Wing::GtE => String::from("GT Wing E"),
 				Wing::Wingless => String::from("Wingless"),
-            }
-        }
-    }
+			}
+		}
+	}
 
-    #[derive(FromPrimitive, ToPrimitive, EnumIter)]
-    enum GtPillar {
-        TallWide = 1,
-        TallNarrow,
-        NormalWide,
-        NormalNarrow,
-        LowWide,
-        LowNarrow,
-    }
+	#[derive(FromPrimitive, ToPrimitive, EnumIter)]
+	enum GtPillar {
+		TallWide = 1,
+		TallNarrow,
+		NormalWide,
+		NormalNarrow,
+		LowWide,
+		LowNarrow,
+	}
 
-    impl ToString for GtPillar {
-        fn to_string(&self) -> String {
-            match self {
-                GtPillar::TallWide => String::from("Tall Wide"),
-                GtPillar::TallNarrow => String::from("Tall Narrow"),
-                GtPillar::NormalWide => String::from("Normal Wide"),
-                GtPillar::NormalNarrow => String::from("Normal Narrow"),
-                GtPillar::LowWide => String::from("Low Wide"),
-                GtPillar::LowNarrow => String::from("Low Narrow"),
-            }
-        }
-    }
+	impl ToString for GtPillar {
+		fn to_string(&self) -> String {
+			match self {
+				GtPillar::TallWide => String::from("Tall Wide"),
+				GtPillar::TallNarrow => String::from("Tall Narrow"),
+				GtPillar::NormalWide => String::from("Normal Wide"),
+				GtPillar::NormalNarrow => String::from("Normal Narrow"),
+				GtPillar::LowWide => String::from("Low Wide"),
+				GtPillar::LowNarrow => String::from("Low Narrow"),
+			}
+		}
+	}
 
-    #[derive(FromPrimitive, ToPrimitive, EnumIter)]
-    enum GtPillarMat {
-        BlackPillar = 0,
-        WhitePillar,
-    }
+	#[derive(FromPrimitive, ToPrimitive, EnumIter)]
+	enum GtPillarMat {
+		BlackPillar = 0,
+		WhitePillar,
+	}
 
-    impl ToString for GtPillarMat {
-        fn to_string(&self) -> String {
-            match self {
-                GtPillarMat::BlackPillar => String::from("Black Pillar"),
-                GtPillarMat::WhitePillar => String::from("White Pillar"),
-            }
-        }
-    }
+	impl ToString for GtPillarMat {
+		fn to_string(&self) -> String {
+			match self {
+				GtPillarMat::BlackPillar => String::from("Black Pillar"),
+				GtPillarMat::WhitePillar => String::from("White Pillar"),
+			}
+		}
+	}
 
-    #[derive(FromPrimitive, ToPrimitive, EnumIter)]
-    enum GtMainWing {
-        Straight = 1,
-        Curve,
-        ThreeD,
-        StraightBig,
-        ThreeDCurve,
-        Twin,
-        CurveBig,
-    }
+	#[derive(FromPrimitive, ToPrimitive, EnumIter)]
+	enum GtMainWing {
+		Straight = 1,
+		Curve,
+		ThreeD,
+		StraightBig,
+		ThreeDCurve,
+		Twin,
+		CurveBig,
+	}
 
-    impl ToString for GtMainWing {
-        fn to_string(&self) -> String {
-            match self {
-                GtMainWing::Straight => String::from("Straight"),
-                GtMainWing::Curve => String::from("Curve"),
-                GtMainWing::ThreeD => String::from("3D"),
-                GtMainWing::StraightBig => String::from("Big Straight"),
-                GtMainWing::ThreeDCurve => String::from("3D Curve"),
-                GtMainWing::Twin => String::from("Twin"),
-                GtMainWing::CurveBig => String::from("Big Curve"),
-            }
-        }
-    }
+	impl ToString for GtMainWing {
+		fn to_string(&self) -> String {
+			match self {
+				GtMainWing::Straight => String::from("Straight"),
+				GtMainWing::Curve => String::from("Curve"),
+				GtMainWing::ThreeD => String::from("3D"),
+				GtMainWing::StraightBig => String::from("Big Straight"),
+				GtMainWing::ThreeDCurve => String::from("3D Curve"),
+				GtMainWing::Twin => String::from("Twin"),
+				GtMainWing::CurveBig => String::from("Big Curve"),
+			}
+		}
+	}
 
-    #[derive(FromPrimitive, ToPrimitive, EnumIter)]
-    enum GtMainWingColor {
-        Red = 0,
-        Orange,
-        Yellow,
-        Green,
-        Purple,
-        Teal,
-        Blue,
-        Black,
-        Silver,
-        White,
-    }
+	#[derive(FromPrimitive, ToPrimitive, EnumIter)]
+	enum GtMainWingColor {
+		Red = 0,
+		Orange,
+		Yellow,
+		Green,
+		Purple,
+		Teal,
+		Blue,
+		Black,
+		Silver,
+		White,
+	}
 
-    impl ToString for GtMainWingColor {
-        fn to_string(&self) -> String {
-            match self {
-                GtMainWingColor::Red => String::from("Red"),
-                GtMainWingColor::Orange => String::from("Orange"),
-                GtMainWingColor::Yellow => String::from("Yellow"),
-                GtMainWingColor::Green => String::from("Green"),
-                GtMainWingColor::Purple => String::from("Purple"),
-                GtMainWingColor::Teal => String::from("Teal"),
-                GtMainWingColor::Blue => String::from("Blue"),
-                GtMainWingColor::Black => String::from("Black"),
-                GtMainWingColor::Silver => String::from("Silver"),
-                GtMainWingColor::White => String::from("White"),
-            }
-        }
-    }
+	impl ToString for GtMainWingColor {
+		fn to_string(&self) -> String {
+			match self {
+				GtMainWingColor::Red => String::from("Red"),
+				GtMainWingColor::Orange => String::from("Orange"),
+				GtMainWingColor::Yellow => String::from("Yellow"),
+				GtMainWingColor::Green => String::from("Green"),
+				GtMainWingColor::Purple => String::from("Purple"),
+				GtMainWingColor::Teal => String::from("Teal"),
+				GtMainWingColor::Blue => String::from("Blue"),
+				GtMainWingColor::Black => String::from("Black"),
+				GtMainWingColor::Silver => String::from("Silver"),
+				GtMainWingColor::White => String::from("White"),
+			}
+		}
+	}
 
-    #[derive(FromPrimitive, ToPrimitive, EnumIter)]
-    enum GtWingTip {
-        Variant1 = 1,
-        Variant2,
-        Variant3,
-        Variant4,
-    }
+	#[derive(FromPrimitive, ToPrimitive, EnumIter)]
+	enum GtWingTip {
+		Variant1 = 1,
+		Variant2,
+		Variant3,
+		Variant4,
+	}
 
-    impl ToString for GtWingTip {
-        fn to_string(&self) -> String {
-            match self {
-                GtWingTip::Variant1 => String::from("Variant 1"),
-                GtWingTip::Variant2 => String::from("Variant 2"),
-                GtWingTip::Variant3 => String::from("Variant 3"),
-                GtWingTip::Variant4 => String::from("Variant 4"),
-            }
-        }
-    }
+	impl ToString for GtWingTip {
+		fn to_string(&self) -> String {
+			match self {
+				GtWingTip::Variant1 => String::from("Variant 1"),
+				GtWingTip::Variant2 => String::from("Variant 2"),
+				GtWingTip::Variant3 => String::from("Variant 3"),
+				GtWingTip::Variant4 => String::from("Variant 4"),
+			}
+		}
+	}
 
-    #[derive(FromPrimitive, ToPrimitive, EnumIter)]
-    enum GtWingMaterial {
-        Carbon = 0,
-        Gloss,
-    }
+	#[derive(FromPrimitive, ToPrimitive, EnumIter)]
+	enum GtWingMaterial {
+		Carbon = 0,
+		Gloss,
+	}
 
-    impl ToString for GtWingMaterial {
-        fn to_string(&self) -> String {
-            match self {
-                GtWingMaterial::Carbon => String::from("Carbon"),
-                GtWingMaterial::Gloss => String::from("Gloss"),
-            }
-        }
-    }
+	impl ToString for GtWingMaterial {
+		fn to_string(&self) -> String {
+			match self {
+				GtWingMaterial::Carbon => String::from("Carbon"),
+				GtWingMaterial::Gloss => String::from("Gloss"),
+			}
+		}
+	}
 
-    ui.horizontal(|ui| {
+	ui.horizontal(|ui| {
 		ui.label("Wing");
 		if car_items.iter().any(|item| {
-			item.category == wm::ItemCategory::CatGtWing.into()
-				&& Some(item.item_id) == Some(1)
+			item.category == wm::ItemCategory::CatGtWing.into() && Some(item.item_id) == Some(1)
 		}) {
 			ui.checkbox(custom, "Custom GT Wng");
 		}
@@ -1260,7 +1262,7 @@ fn set_wing(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem], cus
 		wing_value => match Wing::from_u32(wing_value) {
 			Some(wing) => wing.to_string(),
 			None => String::from("Stock"),
-		}
+		},
 	};
 
 	egui::ComboBox::from_id_source("WingComboBox")
@@ -1272,20 +1274,16 @@ fn set_wing(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem], cus
 					item.category == wm::ItemCategory::CatWing.into()
 						&& Some(item.item_id) == wing.to_u32()
 				}) {
-					ui.selectable_value(
-						&mut car.wing,
-						wing.to_u32().unwrap(),
-						wing.to_string(),
-					);
+					ui.selectable_value(&mut car.wing, wing.to_u32().unwrap(), wing.to_string());
 				}
 			}
 			ui.selectable_value(&mut car.wing, 127, "Wingless");
 		});
-		
+
 	ui.end_row();
 
-    if car.wing == 127 && *custom {
-        ui.label("GT Pillar");
+	if car.wing == 127 && *custom {
+		ui.label("GT Pillar");
 		let selected_pillar = match &car.gt_wing {
 			Some(gt_wing) => match GtPillar::from_u32(gt_wing.pillar) {
 				Some(pillar) => pillar.to_string(),
@@ -1415,31 +1413,31 @@ fn set_wing(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem], cus
 					);
 				}
 			});
-        ui.end_row();
-    } else {
-        car.gt_wing = Some(wm::GtWing {
-            pillar: 0,
-            pillar_material: 0,
-            main_wing: 0,
-            main_wing_color: 0,
-            wing_tip: 0,
-            material: 0,
-        });
-    }
+		ui.end_row();
+	} else {
+		car.gt_wing = Some(wm::GtWing {
+			pillar: 0,
+			pillar_material: 0,
+			main_wing: 0,
+			main_wing_color: 0,
+			wing_tip: 0,
+			material: 0,
+		});
+	}
 }
 
 fn set_wheel(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem], force: &mut bool) {
-    ui.horizontal(|ui| {
+	ui.horizontal(|ui| {
 		ui.label("Wheel");
 		ui.checkbox(force, "Force Equip");
 	});
 
-    let selected = match car.wheel {
-        wheel_value => match wm::Wheel::from_u32(wheel_value) {
-            Some(wheel) => wheel.to_string(),
-            None => String::from("Stock"),
-        },
-    };
+	let selected = match car.wheel {
+		wheel_value => match wm::Wheel::from_u32(wheel_value) {
+			Some(wheel) => wheel.to_string(),
+			None => String::from("Stock"),
+		},
+	};
 
 	ui.horizontal(|ui| {
 		if *force {
@@ -1451,34 +1449,30 @@ fn set_wheel(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem], fo
 						ui.selectable_value(
 							&mut car.wheel,
 							wheel.to_u32().unwrap(),
-							wheel.to_string()
+							wheel.to_string(),
 						);
 					}
 				});
-	
-				if let Some(wheel) = wm::Wheel::from_u32(car.wheel) {
-					if car.wheel != 0 {
-						let color_count = wheel.get_color_count();
-						if color_count > 0 {
-							ui.label("Wheel Color");
-					
-							let selected_color_text = format!("Color {}", car.wheel_color + 1);
-					
-							egui::ComboBox::from_id_source("WheelColorComboBox")
-								.selected_text(selected_color_text)
-								.show_ui(ui, |ui| {
-									for i in 0..color_count {
-										let color_text = format!("Color {}", i + 1);
-										ui.selectable_value(
-											&mut car.wheel_color,
-											i as u32,
-											color_text,
-										);
-									}
-								});
-						}
+
+			if let Some(wheel) = wm::Wheel::from_u32(car.wheel) {
+				if car.wheel != 0 {
+					let color_count = wheel.get_color_count();
+					if color_count > 0 {
+						ui.label("Wheel Color");
+
+						let selected_color_text = format!("Color {}", car.wheel_color + 1);
+
+						egui::ComboBox::from_id_source("WheelColorComboBox")
+							.selected_text(selected_color_text)
+							.show_ui(ui, |ui| {
+								for i in 0..color_count {
+									let color_text = format!("Color {}", i + 1);
+									ui.selectable_value(&mut car.wheel_color, i as u32, color_text);
+								}
+							});
 					}
 				}
+			}
 		} else {
 			egui::ComboBox::from_id_source("WheelComboBox")
 				.selected_text(selected)
@@ -1492,36 +1486,32 @@ fn set_wheel(ui: &mut egui::Ui, car: &mut wm::Car, car_items: &[wm::CarItem], fo
 							ui.selectable_value(
 								&mut car.wheel,
 								wheel.to_u32().unwrap(),
-								wheel.to_string()
+								wheel.to_string(),
 							);
 						}
 					}
 				});
-	
-				if let Some(wheel) = wm::Wheel::from_u32(car.wheel) {
-					if car.wheel != 0 {
-						let color_count = wheel.get_color_count();
-						if color_count > 0 {
-							ui.label("Wheel Color");
-					
-							let selected_color_text = format!("Color {}", car.wheel_color + 1);
-					
-							egui::ComboBox::from_id_source("WheelColorComboBox")
-								.selected_text(selected_color_text)
-								.show_ui(ui, |ui| {
-									for i in 0..color_count {
-										let color_text = format!("Color {}", i + 1);
-										ui.selectable_value(
-											&mut car.wheel_color,
-											i as u32,
-											color_text,
-										);
-									}
-								});
-						}
+
+			if let Some(wheel) = wm::Wheel::from_u32(car.wheel) {
+				if car.wheel != 0 {
+					let color_count = wheel.get_color_count();
+					if color_count > 0 {
+						ui.label("Wheel Color");
+
+						let selected_color_text = format!("Color {}", car.wheel_color + 1);
+
+						egui::ComboBox::from_id_source("WheelColorComboBox")
+							.selected_text(selected_color_text)
+							.show_ui(ui, |ui| {
+								for i in 0..color_count {
+									let color_text = format!("Color {}", i + 1);
+									ui.selectable_value(&mut car.wheel_color, i as u32, color_text);
+								}
+							});
 					}
 				}
 			}
+		}
 	});
 	ui.end_row();
 }
@@ -1577,7 +1567,7 @@ async fn save_car(
 async fn update_car(
 	server: &Url,
 	car: &wm::Car,
-	car_settings: &wm::CarSetting
+	car_settings: &wm::CarSetting,
 ) -> Result<wm::UpdateCarResponse> {
 	let req = wm::UpdateCarRequest {
 		car: Some(car.clone()),

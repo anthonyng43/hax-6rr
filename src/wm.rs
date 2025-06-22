@@ -112,7 +112,7 @@ pub enum Jpn {
 	大分,
 	宮崎,
 	鹿児島,
-	沖繩
+	沖繩,
 }
 
 impl ToString for Jpn {
@@ -164,7 +164,7 @@ impl ToString for Jpn {
 			Jpn::大分 => String::from("大分"),
 			Jpn::宮崎 => String::from("宮崎"),
 			Jpn::鹿児島 => String::from("鹿児島"),
-			Jpn::沖繩 => String::from("沖繩")
+			Jpn::沖繩 => String::from("沖繩"),
 		}
 	}
 }
@@ -217,7 +217,7 @@ pub enum Glb {
 	USA,
 	URY,
 	VNM,
-	OCR
+	OCR,
 }
 
 impl ToString for Glb {
@@ -269,7 +269,7 @@ impl ToString for Glb {
 			Glb::USA => String::from("USA"),
 			Glb::URY => String::from("URY"),
 			Glb::VNM => String::from("VNM"),
-			Glb::OCR => String::from("OCR")
+			Glb::OCR => String::from("OCR"),
 		}
 	}
 }
@@ -2362,7 +2362,7 @@ impl Cars {
 					reflect: 0.38025,
 					cosine: 0.4,
 					fresnel: 0.20025,
-				},
+				}
 			],
 			Cars::CAMARO => vec![
 				CarColor {
@@ -2436,7 +2436,7 @@ impl Cars {
 					reflect: 0.0,
 					cosine: 1.00024,
 					fresnel: 0.20025,
-				},
+				}
 			],
 			Cars::C3 => vec![
 				CarColor {
@@ -2872,7 +2872,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.08,
-				},
+				}
 			],
 			Cars::SA22 => vec![
 				CarColor {
@@ -2946,7 +2946,7 @@ impl Cars {
 					reflect: 0.300249,
 					cosine: 0.4,
 					fresnel: 0.30025,
-				},
+				}
 			],
 			Cars::CZ4A => vec![
 				CarColor {
@@ -3084,7 +3084,7 @@ impl Cars {
 					reflect: 0.16975,
 					cosine: 10.0275,
 					fresnel: 0.300499,
-				},
+				}
 			],
 			Cars::CP9A6_RS => vec![
 				CarColor {
@@ -3096,7 +3096,7 @@ impl Cars {
 					reflect: 0.17,
 					cosine: 10.0875,
 					fresnel: 0.29975,
-				},
+				}
 			],
 			Cars::CP9A6_GSR => vec![
 				CarColor {
@@ -3192,7 +3192,7 @@ impl Cars {
 					reflect: 0.17,
 					cosine: 10.45,
 					fresnel: 0.3005,
-				},
+				}
 			],
 			Cars::CE9A_GSR => vec![
 				CarColor {
@@ -3246,7 +3246,7 @@ impl Cars {
 					reflect: 0.1695,
 					cosine: 9.71943,
 					fresnel: 0.2995,
-				},
+				}
 			],
 			Cars::Z16A => vec![
 				CarColor {
@@ -3550,7 +3550,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 10.035,
 					fresnel: 0.09,
-				},
+				}
 			],
 			Cars::BCNR33 => vec![
 				CarColor {
@@ -3956,7 +3956,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::S30 => vec![
 				CarColor {
@@ -5265,7 +5265,7 @@ impl Cars {
 					reflect: 0.17,
 					cosine: 6.02251,
 					fresnel: 0.29975,
-				},
+				}
 			],
 			Cars::UCF10T_V1 => vec![
 				CarColor {
@@ -5277,7 +5277,7 @@ impl Cars {
 					reflect: 0.17025,
 					cosine: 6.02251,
 					fresnel: 0.29975,
-				},
+				}
 			],
 			Cars::UCF10T_V2 => vec![
 				CarColor {
@@ -5289,7 +5289,7 @@ impl Cars {
 					reflect: 0.16975,
 					cosine: 6.02251,
 					fresnel: 0.29975,
-				},
+				}
 			],
 			Cars::UCF10T_V3 => vec![
 				CarColor {
@@ -5301,7 +5301,7 @@ impl Cars {
 					reflect: 0.17025,
 					cosine: 6.02251,
 					fresnel: 0.299749,
-				},
+				}
 			],
 			Cars::UCF10T_V4 => vec![
 				CarColor {
@@ -5313,7 +5313,7 @@ impl Cars {
 					reflect: 0.16975,
 					cosine: 6.02251,
 					fresnel: 0.300249,
-				},
+				}
 			],
 			Cars::JZS161 => vec![
 				CarColor {
@@ -5387,7 +5387,7 @@ impl Cars {
 					reflect: 0.17,
 					cosine: 6.19975,
 					fresnel: 0.299999,
-				},
+				}
 			],
 			Cars::NZE121 => vec![
 				CarColor {
@@ -5763,7 +5763,7 @@ impl Cars {
 					reflect: 0.0,
 					cosine: 1.00025,
 					fresnel: 0.19975,
-				},
+				}
 			],
 			Cars::E89 => vec![
 				CarColor {
@@ -6714,7 +6714,7 @@ impl Cars {
 			],
 			Cars::MXG => vec![
 				CarColor {
-					name: String::from("No Color Name Given"),
+				name: String::from("No Color Name Given"),
 					body_color_0: [0.95, 0.95, 0.95, 1.0],
 					body_color_1: [0.95, 0.95, 0.95, 1.0],
 					spec_color: [0.8, 0.8, 0.8, 1.0],
@@ -6722,7 +6722,7 @@ impl Cars {
 					reflect: 0.17,
 					cosine: 10.125,
 					fresnel: 0.300249,
-				},
+				}
 			],
 			Cars::E89P => vec![
 				CarColor {
@@ -6734,7 +6734,7 @@ impl Cars {
 					reflect: 0.17,
 					cosine: 0.500011,
 					fresnel: 0.08,
-				},
+				}
 			],
 			Cars::E92_MAT => vec![
 				CarColor {
@@ -6746,7 +6746,7 @@ impl Cars {
 					reflect: 0.0,
 					cosine: 1.00001,
 					fresnel: 0.200249,
-				},
+				}
 			],
 			Cars::CAMAROT => vec![
 				CarColor {
@@ -6758,7 +6758,7 @@ impl Cars {
 					reflect: 0.3825,
 					cosine: 0.400011,
 					fresnel: 0.200249,
-				},
+				}
 			],
 			Cars::R172P => vec![
 				CarColor {
@@ -6770,7 +6770,7 @@ impl Cars {
 					reflect: 0.38,
 					cosine: 0.400011,
 					fresnel: 0.200249,
-				},
+				}
 			],
 			Cars::KDH201VH => vec![
 				CarColor {
@@ -6980,7 +6980,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 1.00001,
 					fresnel: 0.08025,
-				},
+				}
 			],
 			Cars::R8 => vec![
 				CarColor {
@@ -20444,7 +20444,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::BNR35V => vec![
 				CarColor {
@@ -20456,7 +20456,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::BNR34 => vec![
 				CarColor {
@@ -26498,7 +26498,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::R997 => vec![
 				CarColor {
@@ -26510,7 +26510,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::RKC => vec![
 				CarColor {
@@ -26522,7 +26522,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::GRB => vec![
 				CarColor {
@@ -45026,7 +45026,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::GVB => vec![
 				CarColor {
@@ -47048,7 +47048,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::E89P => vec![
 				CarColor {
@@ -55100,7 +55100,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::MARK2 => vec![
 				CarColor {
@@ -58328,7 +58328,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::JW5 => vec![
 				CarColor {
@@ -58340,7 +58340,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::AP2 => vec![
 				CarColor {
@@ -58352,7 +58352,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::BNR35MC => vec![
 				CarColor {
@@ -58364,7 +58364,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::PS13 => vec![
 				CarColor {
@@ -62798,7 +62798,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 			Cars::C110 => vec![
 				CarColor {
@@ -64016,7 +64016,7 @@ impl Cars {
 					reflect: 0.5,
 					cosine: 0.4,
 					fresnel: 0.04,
-				},
+				}
 			],
 		}
 	}
@@ -64663,7 +64663,7 @@ pub enum TeamDeco {
 	Forbidden,
 	Barcode,
 	Zipper,
-	WanganUrl2
+	WanganUrl2,
 }
 
 impl ToString for TeamDeco {
@@ -64766,7 +64766,7 @@ pub enum TerminalBackground {
 	WildernessEvening,
 	Coast,
 	Aurora,
-	Galaxy
+	Galaxy,
 }
 
 impl ToString for TerminalBackground {
@@ -64796,7 +64796,7 @@ impl ToString for TerminalBackground {
 			TerminalBackground::WildernessEvening => String::from("Wilderness Evening"),
 			TerminalBackground::Coast => String::from("Coast"),
 			TerminalBackground::Aurora => String::from("Aurora"),
-			TerminalBackground::Galaxy => String::from("Galaxy")
+			TerminalBackground::Galaxy => String::from("Galaxy"),
 		}
 	}
 }
@@ -64822,7 +64822,7 @@ pub enum Wheel {
 	RaysGramLights57D,
 	RaysVolkRacingTE37Saga,
 	RaysVolkRacingTE37Dura,
-	RaysVolkRacingZE40= 27,
+	RaysVolkRacingZE40 = 27,
 	EnkeiPFM1,
 	EnkeiRacingRPF1,
 	EnkeiNT03RR,
@@ -64874,7 +64874,7 @@ impl ToString for Wheel {
 			Wheel::BbsFzMG => String::from("BBS FZ-MG"),
 			Wheel::WorkEmotionZR10 => String::from("WORK WORK EMOTION ZR10"),
 			Wheel::WorkSeekerGX => String::from("WORK Seeker GX"),
-			Wheel::WorkZeastST3 => String::from("WORK ZEAST ST3")
+			Wheel::WorkZeastST3 => String::from("WORK ZEAST ST3"),
 		}
 	}
 }
@@ -64911,7 +64911,7 @@ impl Wheel {
 			Wheel::BbsFzMG => 2,
 			Wheel::WorkEmotionZR10 => 6,
 			Wheel::WorkSeekerGX => 6,
-			Wheel::WorkZeastST3 => 6
+			Wheel::WorkZeastST3 => 6,
 		}
 	}
 }
